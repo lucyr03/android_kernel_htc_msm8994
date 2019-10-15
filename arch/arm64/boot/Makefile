@@ -24,7 +24,10 @@ DTB_LIST := $(addsuffix .dtb,$(DTB_NAMES))
 else
 DTB_LIST := $(dtb-y)
 endif
+DTB_OBJS := $(addprefix arch/arm/boot/dts/,$(DTB_LIST))
+ifeq ("$(wildcard $(DTB_OBJS))","")
 DTB_OBJS := $(addprefix $(obj)/dts/,$(DTB_LIST))
+endif
 
 $(obj)/Image: vmlinux FORCE
 	$(call if_changed,objcopy)
@@ -42,3 +45,5 @@ install: $(obj)/Image
 zinstall: $(obj)/Image.gz
 	$(CONFIG_SHELL) $(srctree)/$(src)/install.sh $(KERNELRELEASE) \
 	$(obj)/Image.gz System.map "$(INSTALL_PATH)"
+
+clean-files := Image Image-dtb Image.gz Image.gz-dtb
